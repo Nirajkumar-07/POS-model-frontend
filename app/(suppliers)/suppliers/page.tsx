@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
-import DataTable from "@/components/ui/data-table";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { useColumn } from "./components/columns";
+import { SupplierList } from "@/lib/services/supplier.service";
+import TableWrapper from "./components/table-wrapper";
 
-export default function Page() {
+async function Page() {
+  const res = await SupplierList();
   return (
     <div className="w-full max-h-screen grid gap-6 py-4">
       <div className="w-full flex items-center justify-between">
@@ -15,7 +16,9 @@ export default function Page() {
           </Button>
         </Link>
       </div>
-      <DataTable useColumn={useColumn} data={[]} />
+      <TableWrapper data={res.data ? res.data : []} />
     </div>
   );
 }
+
+export default Page;

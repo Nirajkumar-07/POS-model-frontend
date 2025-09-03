@@ -74,6 +74,7 @@ export default function InputField({
           id={name}
           placeholder={placeholder}
           required={required}
+          name={name}
         />
       ) : type == "password" ? (
         <div
@@ -97,6 +98,7 @@ export default function InputField({
             onClick={onClick}
             placeholder={placeholder}
             required={required}
+            name={name}
           />
           <Button
             variant={"ghost"}
@@ -128,6 +130,7 @@ export default function InputField({
           type={type}
           placeholder={placeholder}
           required={required}
+          name={name}
         />
       )}
       {showErrorMessage && errors && errors.length > 0 && (

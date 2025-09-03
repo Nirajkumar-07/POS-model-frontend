@@ -12,8 +12,10 @@ import {
 } from "../select";
 import { Supplier } from "@/lib/models/supplier.model";
 import { Button } from "../button";
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { addUpdateSupplier } from "@/lib/actions/supplier.actions";
+import { redirect } from "next/navigation";
+import Loader from "../loader";
 
 interface SupplierFormProps {
   mode: "add" | "update";
@@ -23,33 +25,68 @@ interface SupplierFormProps {
 
 export default function SupplierForm({ mode, data, id }: SupplierFormProps) {
   const addUpdateSupplierWithBind = addUpdateSupplier.bind(null, mode, id!);
-  const [state, formAction] = useActionState(
+  const uniqueId = useRef(data?.uniqueId || `SUP${Date.now()}`);
+  const [state, formAction, loading] = useActionState(
     addUpdateSupplierWithBind,
     undefined
   );
+
+  useEffect(() => {
+    if (state && "success" in state && state.success) {
+      redirect("/suppliers");
+    }
+  }, [state]);
   return (
     <>
+      {loading && <Loader />}
       <form action={formAction}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <InputField
             label="UniqueID"
             name="uniqueId"
             readOnly
-            disabled
             boxClassName="lg:col-span-2"
-            className="bg-gray-300"
+            value={uniqueId.current}
+            className="bg-gray-300 pointer-events-none"
             required
           />
-          <InputField label="Name" name="name" required />
-          <InputField label="Contact Person" name="contactPerson" required />
-          <InputField label="Phone" name="phone" required />
-          <InputField label="Email" name="email" type="email" required />
+          <InputField
+            label="Name"
+            name="name"
+            defaultValue={data?.name}
+            placeholder="Enter Name"
+            required
+          />
+          <InputField
+            label="Contact Person"
+            name="contactPerson"
+            defaultValue={data?.contactPerson}
+            placeholder="Enter Contact Person"
+            required
+          />
+          <InputField
+            label="Phone"
+            name="phone"
+            placeholder="Enter Phone"
+            defaultValue={data?.phone}
+            required
+          />
+          <InputField
+            label="Email"
+            name="email"
+            placeholder="Enter Email"
+            defaultValue={data?.email}
+            type="email"
+            required
+          />
           <InputField
             label="Address"
             name="address"
+            placeholder="Enter Address"
             boxClassName="lg:col-span-2"
             multiline
             rows={3}
+            defaultValue={data?.address}
             required
           />
           <div>
@@ -57,8 +94,8 @@ export default function SupplierForm({ mode, data, id }: SupplierFormProps) {
               Category
               <sup className="text-red-500">*</sup>
             </Label>
-            <Select name="category">
-              <SelectTrigger className="w-full" id="category">
+            <Select name="category" defaultValue={data?.category}>
+              <SelectTrigger className="w-full capitalize" id="category">
                 <SelectValue placeholder="Select Category" />
               </SelectTrigger>
               <SelectContent>
@@ -74,15 +111,32 @@ export default function SupplierForm({ mode, data, id }: SupplierFormProps) {
               </SelectContent>
             </Select>
           </div>
-          <InputField label="GST" name="gst" />
-          <InputField label="Payment Terms" name="paymentTerms" />
-          <InputField label="Credit limit" name="creditLimit" />
+          <InputField
+            label="GST"
+            name="gst"
+            placeholder="Enter GST Number"
+            defaultValue={data?.gstNumber}
+          />
+          <InputField
+            label="Payment Terms"
+            placeholder="Enter Payment Terms"
+            name="paymentTerms"
+            defaultValue={data?.paymentTerms}
+          />
+          <InputField
+            label="Credit limit"
+            name="creditLimit"
+            placeholder="Enter Credit Limit"
+            defaultValue={data?.creditLimit}
+          />
           <InputField
             label="Bank Details"
             name="bankDetails"
+            placeholder="Enter Bank Details"
             boxClassName="lg:col-span-2"
             multiline
             rows={3}
+            defaultValue={data?.bankDetails}
           />
           <Button
             className="uppercase w-full lg:col-span-2"

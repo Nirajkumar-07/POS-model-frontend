@@ -11,6 +11,11 @@ interface RatingsProps {
   onChange?: (event: { target: { value: number } }) => void;
   color?: string;
   className?: string;
+  fixed?: boolean;
+  value?: number;
+  size?: number;
+  iconClassName?: string;
+  boxClassName?: string;
 }
 
 export default function Ratings({
@@ -19,20 +24,25 @@ export default function Ratings({
   onChange,
   className,
   color,
+  fixed,
+  value,
+  size,
+  iconClassName,
+  boxClassName,
 }: RatingsProps) {
-  const [value, setValue] = useState(defaultValue || 0);
+  const [val, setVal] = useState(defaultValue || value || 0);
 
   const handleClick = useCallback((val: number) => {
-    setValue(val);
+    setVal(val);
     if (onChange) onChange({ target: { value: val } });
   }, []);
 
   return (
-    <div className="flex gap-1 items-center">
+    <div className={cn("flex gap-1 items-center", boxClassName)}>
       <input
         name={name}
         readOnly
-        value={value}
+        value={val}
         type="hidden"
         hidden
         className="hidden"
@@ -41,22 +51,24 @@ export default function Ratings({
       {Array.from({ length: 5 }, (_, i) => {
         const starValue = i + 1;
         return (
-          <Button
+          <button
             key={starValue}
             type="button"
-            variant="ghost"
-            className="!p-0"
-            onClick={() => handleClick(starValue)}
+            className={cn("cursor-pointer", className)}
+            onClick={() => (!fixed ? handleClick(starValue) : undefined)}
           >
             <Star
+              size={size || 18}
+              color={color}
               className={cn(
-                "h-6 w-6 transition-colors",
-                starValue <= value
+                "transition-colors",
+                iconClassName,
+                starValue <= val
                   ? "text-yellow-500 fill-yellow-500"
-                  : "text-transparent fill-transparent"
+                  : "text-gray-500 fill-transparent"
               )}
             />
-          </Button>
+          </button>
         );
       })}
     </div>

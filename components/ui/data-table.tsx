@@ -16,19 +16,17 @@ import {
 } from "./table";
 
 interface DataTableProps<TData, TValue> {
-  useColumn: () => ColumnDef<TData, TValue>[];
+  column: () => ColumnDef<TData, TValue>[];
   data: TData[];
-  otherData?: any;
 }
 
 export default function DataTable<TData, TValue>({
-  useColumn,
+  column,
   data,
-  otherData,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data: data,
-    columns: useColumn(),
+    columns: column(),
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -68,7 +66,7 @@ export default function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell
-                colSpan={useColumn().length}
+                colSpan={column().length}
                 className="h-24 text-center text-lg text-gray-400"
               >
                 No Results.
